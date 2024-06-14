@@ -1,103 +1,15 @@
 'use client'
 import Link from 'next/link';
-import styled from 'styled-components';
-import Image from 'next/image';
+
 import { forgotPassword } from '../Services/user.services';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Swal from 'sweetalert2';
+import { Container, ErrorMessageStyled, FormGroup, FormStyle, ImageAndTitleContainer, ImageStyle, Input, Label, Main, SmallText, SpanText, SubmitButton, Title } from '../styles/Forgot.style';
 
-const ErrorMessageStyled = styled(ErrorMessage)`
-  color: red;
-`;
 
-const Main = styled.main`
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #494C4F;
-  font-family : system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-`;
-
-const Container = styled.div`
-  padding: 20px;
-  max-width: 400px;
-  width: 100%;
-  margin-top: 20px;
-`;
-
-const Title = styled.h1`
-  color: white;
-  text-align: center;
-  margin-bottom: 20px;
-`;
-
-const FormStyle = styled(Form)`
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  background-color: #fff;
-`;
-
-const FormGroup = styled.div`
-  margin-bottom: 15px;
-`;
-
-const Label = styled.label`
-  margin-bottom: 5px;
-  display: block;
-`;
-
-const Input = styled(Field)`
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-  border: none;
-  border-bottom: 1px solid #A0A0A033;
-`;
-
-const SmallText = styled.span`
-  font-size: 13px; 
-  margin: 5px;
-  margin-bottom: 10px;
-`;
-
-const ImageAndTitleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  text-align: center; 
-  justify-content: center;
-`;
-
-const ImageStyle = styled(Image)`
-  margin-right: 10px; 
-  margin-bottom: -10px;
-`;
-
-const SpanText = styled.span`
-  text-align: center;
-  color: #fff;
-  margin-top: 20px;
-  display: block; 
-  a {
-    color: #FFD964; 
-    text-decoration: none;
-  }
-`;
-
-const SubmitButton = styled.button`
-  background-color: #494C4F;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-`;
 
 // Schéma de validation avec Yup
 const validationSchema = Yup.object().shape({

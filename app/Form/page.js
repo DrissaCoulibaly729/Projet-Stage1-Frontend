@@ -1,143 +1,34 @@
 "use client";
 import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { MdArrowBack, MdAddPhotoAlternate } from "react-icons/md";
+
+import { MdAddPhotoAlternate } from "react-icons/md";
 import { useRouter } from "next/navigation";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik } from "formik";
 import * as Yup from "yup";
 import { createHotel, updateHotel } from "../Services/hotel.services"; // Assuming you have an updateHotel service
 import Swal from "sweetalert2";
+import {
+  BackIcon,
+  Button,
+  CustomFileInput,
+  DottedLine,
+  ErrorMessageStyled,
+  FileInput,
+  FormContainer,
+  FormGroup,
+  FormRow,
+  FormTitle,
+  HeaderContainer,
+  Input,
+  Label,
+  Modal,
+  Select,
+} from "../styles/Form.style";
 
 const isAuthenticated = () => {
   const userId = localStorage.getItem("userId");
   return !!userId; // Retourne true si userId existe, sinon false
 };
-
-const FormContainer = styled.div`
-  max-width: 966px;
-  width: 100%;
-  margin: 50px auto;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
-`;
-
-const BackIcon = styled(MdArrowBack)`
-  font-size: 24px;
-  cursor: pointer;
-  margin-right: 10px;
-`;
-
-const HeaderContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-const FormTitle = styled.h2`
-  font-size: 24px;
-  text-align: center;
-  display: flex;
-  align-items: center;
-`;
-
-const FormRow = styled.div`
-  display: flex;
-  gap: 20px;
-  margin-bottom: 10px;
-`;
-
-const FormGroup = styled.div`
-  flex: ${(props) => (props.doubleWidth ? "2" : "1")};
-  margin: 10px;
-`;
-
-const Label = styled.label`
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-`;
-
-const Input = styled.input`
-  width: 80%;
-  padding: 10px;
-  padding-right: 80px;
-  font-size: 16px;
-  border: 1px solid #dddddd;
-  border-radius: 8px;
-  color: #000000;
-`;
-
-const Select = styled.select`
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #dddddd;
-  border-radius: 8px;
-  color: #000000;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #555555;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  margin-left: 800px;
-`;
-
-const FileInput = styled.input`
-  display: none;
-`;
-
-const CustomFileInput = styled.label`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 80%;
-  padding: 50px;
-  padding-right: 140px;
-  border: 2px solid #dddddd;
-  border-radius: 5px;
-  cursor: pointer;
-  text-align: center;
-  color: white;
-  font-size: 16px;
-
-  svg {
-    font-size: 50px;
-    margin-bottom: 10px;
-    color: #dddddd;
-  }
-
-  img {
-    max-width: 200px; 
-    max-height: 100px; 
-    object-fit: cover;
-    margin-top: 10px;
-  }
-`;
-
-const DottedLine = styled.hr`
-  border: none;
-  border-top: 1px dotted #ccc;
-`;
-
-const Modal = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
 
 const validationSchema = Yup.object().shape({
   hotelName: Yup.string().required("Veuillez entrer le nom de l'hôtel."),
@@ -154,10 +45,6 @@ const validationSchema = Yup.object().shape({
   currency: Yup.string().required("Veuillez sélectionner la devise."),
   photo: Yup.mixed().required("Veuillez ajouter une photo de l'hôtel."),
 });
-
-const ErrorMessageStyled = styled(ErrorMessage)`
-  color: red;
-`;
 
 export default function Page() {
   const router = useRouter();
@@ -242,7 +129,7 @@ export default function Page() {
           formData.append("pricePerNight", values.pricePerNight);
           formData.append("currency", values.currency);
           formData.append("photo", values.photo);
-          console.log('photo :', values.photo);
+          console.log("photo :", values.photo);
           if (isEditMode) {
             // Update existing hotel
             await updateHotel(hotelId, formData);
@@ -390,7 +277,9 @@ export default function Page() {
                     type="file"
                     id="photo"
                     name="photo"
-                    onChange={(event) => handlePhotoChange(event, setFieldValue)}
+                    onChange={(event) =>
+                      handlePhotoChange(event, setFieldValue)
+                    }
                     required
                   />
                   <CustomFileInput htmlFor="photo">
