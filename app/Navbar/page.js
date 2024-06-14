@@ -163,7 +163,7 @@ export default function Navbar({ text, userId }) {
   const router = useRouter();
 
   const [user, setUser] = useState(null);
-  const [imageUrl, setImageUrl] = useState('/assets/img/user.png'); // Default image
+  const [imageUrl, setImageUrl] = useState('/assets/img/vector-users-icon.jpg'); // Default image
 
   useEffect(() => {
     const fetchUser = async () => {
