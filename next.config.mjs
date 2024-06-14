@@ -2,7 +2,7 @@
 const nextConfig = {
     reactStrictMode: true,
     images: {
-        domains: ['https://projet-stage1-backend.onrender.com', 'localhost:5000'],
+        domains: ['https://projet-stage1-backend.onrender.com'],
     },  
 };
 export default nextConfig;
