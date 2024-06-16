@@ -20,7 +20,7 @@ export default function Page() {
   useEffect(() => {
     const isLoggedIn = isAuthenticated();
     if (!isLoggedIn) {
-      router.push("/"); // Redirige vers la page de connexion si l'utilisateur n'est pas connecté
+      //router.push("/"); // Redirige vers la page de connexion si l'utilisateur n'est pas connecté
     }
   }, [router]);
 
