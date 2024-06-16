@@ -1,10 +1,12 @@
-'use client'
+'use client';
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Formik } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Swal from 'sweetalert2';
+import zxcvbn from 'zxcvbn';
+import { useState } from 'react';
 import { createUser } from '../Services/user.services'; // Assurez-vous que ce chemin est correct
 import { 
   Main, Container, Title, ImageAndTitleContainer, ImageStyle, 
@@ -13,14 +15,28 @@ import {
 } from '../styles/Register.style'; // Assurez-vous que ce chemin est correct
 
 const validationSchema = Yup.object({
-  name: Yup.string().required("S'il vous plaît entrez le nom de l'utilisateur"),
-  email: Yup.string().email("Email invalide").required("S'il vous plaît entrez l'email"),
-  password: Yup.string().min(6, 'Le mot de passe doit comporter au moins 6 caractères').required("S'il vous plaît entrez le mot de passe"),
-  terms: Yup.boolean().oneOf([true], 'Vous devez accepter les termes et la politique'),
+  name: Yup.string()
+    .matches(/^[a-zA-Z]+(?: [a-zA-Z]+)*$/, "Le nom ne doit contenir que des lettres et des espaces, et ne pas commencer ou se terminer par des espaces")
+    .required("S'il vous plaît entrez le nom de l'utilisateur"),
+  email: Yup.string()
+    .email("Email invalide")
+    .required("S'il vous plaît entrez l'email"),
+  password: Yup.string()
+    .min(8, 'Le mot de passe doit comporter au moins 8 caractères')
+    .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, "Le mot de passe doit comporter des lettres, des chiffres et des caractères spéciaux")
+    .required("S'il vous plaît entrez le mot de passe"),
+  terms: Yup.boolean()
+    .oneOf([true], 'Vous devez accepter les termes et la politique'),
 });
+
+const getPasswordStrength = (password) => {
+  const result = zxcvbn(password);
+  return result.score;
+};
 
 export default function Register() {
   const router = useRouter();
+  const [passwordStrength, setPasswordStrength] = useState(0);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     console.log(values);
@@ -57,31 +73,71 @@ export default function Register() {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting }) => (
-            <StyledForm>
+          {({ isSubmitting, values, handleChange }) => (
+            <StyledForm as={Form}>
               <SmallText>Inscrivez-vous en tant qu'administrateur</SmallText>
               <FormGroup>
                 <Label>Nom</Label>
-                <Input type="text" name="name" />
+                <Field as={Input} type="text" name="name" />
                 <ErrorMessageStyled name="name" component={ErrorText} />
               </FormGroup>
               <FormGroup>
                 <Label>E-mail (@gmail.com)</Label>
-                <Input type="email" name="email" />
+                <Field as={Input} type="email" name="email" />
                 <ErrorMessageStyled name="email" component={ErrorText} />
               </FormGroup>
               <FormGroup>
                 <Label>Mot de passe</Label>
-                <Input type="password" name="password" />
+                <Field
+                  as={Input}
+                  type="password"
+                  name="password"
+                  onChange={(e) => {
+                    handleChange(e);
+                    setPasswordStrength(getPasswordStrength(e.target.value));
+                  }}
+                />
                 <ErrorMessageStyled name="password" component={ErrorText} />
+                <div>
+                  <div style={{
+                    width: '100%',
+                    height: '10px',
+                    backgroundColor: (() => {
+                      switch (passwordStrength) {
+                        case 0: return 'red';
+                        case 1: return 'orange';
+                        case 2: return 'yellow';
+                        case 3: return 'lightgreen';
+                        case 4: return 'green';
+                        default: return 'transparent';
+                      }
+                    })()
+                  }}></div>
+                  <div style={{ marginTop: '5px', fontSize: '14px', color: (() => {
+                    switch (passwordStrength) {
+                      case 0: return 'red';
+                      case 1: return 'orange';
+                      case 2: return 'yellow';
+                      case 3: return 'lightgreen';
+                      case 4: return 'green';
+                      default: return 'black';
+                    }
+                  })() }}>
+                    {passwordStrength === 0 && 'Très faible'}
+                    {passwordStrength === 1 && 'Faible'}
+                    {passwordStrength === 2 && 'Moyen'}
+                    {passwordStrength === 3 && 'Bon'}
+                    {passwordStrength === 4 && 'Parfait'}
+                  </div>
+                </div>
               </FormGroup>
               <CheckboxContainer>
-                <Checkbox type="checkbox" name="terms" />
+                <Field as={Checkbox} type="checkbox" name="terms" />
                 <TermsText>Accepter les termes et la politique</TermsText>
                 <ErrorMessageStyled name="terms" component={ErrorText} />
               </CheckboxContainer>
               <SubmitButton type="submit" disabled={isSubmitting}>
-                S'inscrire
+                {isSubmitting ? 'Traitement en cours...' : 'S\'inscrire'}
               </SubmitButton>
             </StyledForm>
           )}

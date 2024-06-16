@@ -1,17 +1,14 @@
-// pages/Auth.js
 'use client';
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styled from 'styled-components';
-import { Formik, ErrorMessage } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { getUserByEmail } from '../Services/user.services';
 import { useUser } from '../Context/UserContext';
 import Swal from 'sweetalert2';
 import { Checkbox, CheckboxContainer, Container, CustomLinkContainer, FormGroup, ImageAndTitleContainer, ImageStyle, Input, Label, Main, SmallText, SpanText, StyledForm, SubmitButton, TermsText, Title } from '../styles/Auth.style';
-
-
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -19,6 +16,7 @@ const validationSchema = Yup.object().shape({
     .required("Veuillez entrer votre adresse e-mail."),
   password: Yup.string().required("Veuillez entrer votre mot de passe."),
 });
+
 const ErrorMessageStyled = styled(ErrorMessage)`
   color: red;
 `;
@@ -29,8 +27,13 @@ export default function Auth() {
   
   const handleSubmit = async (values, { setSubmitting, setFieldError }) => {
     try {
+      // Vérifiez la validité de l'email avant d'interroger la base de données
+      if (!validationSchema.isValidSync(values)) {
+        return;
+      }
+
       const user = await getUserByEmail(values.email);
-  
+
       // Vérifiez si l'utilisateur existe et si le mot de passe correspond
       if (!user || user.password !== values.password) {
         Swal.fire({
@@ -41,11 +44,11 @@ export default function Auth() {
         setSubmitting(false);
         return;
       }
-  
+
       // Définissez userId dans le contexte utilisateur et dans le localStorage
       setUserId(user._id);
       localStorage.setItem('userId', user._id);
-  
+
       // Connexion réussie, redirigez vers le dashboard
       router.push(`/Dashboard`);
     } catch (error) {
@@ -98,7 +101,7 @@ export default function Auth() {
                 <TermsText>Gardez moi connecté</TermsText>
               </CheckboxContainer>
               <SubmitButton type="submit" disabled={isSubmitting}>
-                Connecter
+                {isSubmitting ? 'Traitement en cours...' : 'Connecter'}
               </SubmitButton>
               <ErrorMessageStyled name="submit" component="div" />
             </StyledForm>
@@ -115,4 +118,3 @@ export default function Auth() {
     </Formik>
   );
 }
-

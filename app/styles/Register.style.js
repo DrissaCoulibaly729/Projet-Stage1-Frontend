@@ -1,3 +1,4 @@
+'use client'
 import styled from "styled-components";
 import Image from 'next/image';
 import { Form, Field, ErrorMessage } from 'formik';
@@ -113,4 +114,32 @@ export const SubmitButton = styled.button`
 
 export const ErrorMessageStyled = styled(ErrorMessage)`
   color: red;
+`;
+
+export const PasswordStrengthMeter = styled.div`
+  margin-top: 10px;
+`;
+
+export const PasswordStrengthBar = styled.div`
+  width: 100%;
+  height: 10px;
+  background: ${({ strength }) => {
+    if (strength === 0) return 'red';
+    if (strength === 1) return 'orange';
+    if (strength === 2) return 'yellow';
+    if (strength === 3) return 'lightgreen';
+    if (strength === 4) return 'green';
+  }};
+`;
+
+export const PasswordStrengthText = styled.div`
+  margin-top: 5px;
+  font-size: 14px;
+  color: ${({ strength }) => {
+    if (strength === 0) return 'red';
+    if (strength === 1) return 'orange';
+    if (strength === 2) return 'yellow';
+    if (strength === 3) return 'lightgreen';
+    if (strength === 4) return 'green';
+  }};
 `;
